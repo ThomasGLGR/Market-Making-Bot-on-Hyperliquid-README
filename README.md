@@ -8,7 +8,6 @@ This README outlines the architecture and setup of a high-frequency market-makin
 - 🔗 [LinkedIn](https://www.linkedin.com/in/thomasgilger)
 
 
-
 ## 1. Technical Prerequisites
 | Component     | Recommendation              | Justification                                                                 |
 |---------------|-----------------------------|-------------------------------------------------------------------------------|
@@ -19,7 +18,7 @@ This README outlines the architecture and setup of a high-frequency market-makin
 |               | `go.uber.org/zap`           | High-performance structured logging library |
 
 ## 2. Software Architecture
-![Architecture](architecture.png)
+![Architecture](media/architecture.png)
 
 ## 3. Deploying the Hyperliquid Node
 
@@ -35,15 +34,14 @@ This README outlines the architecture and setup of a high-frequency market-makin
 
 ## 4. Market‑Making Parameters
 
-| Parameter | Details |
-| --- | --- |
-| **Dynamic Spread** | `spread = spread_vol` if `spread_vol ≥ spread_min` with: |
-|  | • `spread_vol = f(RealizedVol + MedRV + EWMA)` |
-|  | • `spread_min > 0.03%` when 14‑day volume ≥ 500 M (to cover fees) |
-|  | • `spread_min > 0.01%` otherwise (reduced fees after certain volume) |
-| **Order Size** | max `5%` of the order‑book depth on the quote side |
-| **Volatility Filter** | • **Pause quoting** if `spread_vol` > 1% |
-| **Time‑In‑Force (TIF)** | ALO (Add Liquidity Only) orders with a 5 s duration |
+| Parameter               | Details                                                                                                                                                                                                           |
+| ----------------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Dynamic Spread**      | Use `spread = spread_vol` when `spread_vol ≥ spread_min`.<br>• `spread_vol` from RealizedVol, MedRV, EWMA (short-term).<br>• `spread_min ≥ 0.03%` if 14-day volume ≥ \$500M.<br>• Otherwise `spread_min ≥ 0.01%`. |
+| **Trend Score**         | A normalized score in [−1, 1] based on short-term returns, RV, and microprice                                                                                                                                     |
+| **One-Sided Orders**    | If `TrendScore ≥ 0`: post **bid only**. If `< 0`: post **ask only**.                                                                                                                   |
+| **Order Size**          | ≤ `5%` of top-of-book depth on the quoted side.                                                                                                                                                                   |
+| **Volatility Filter**   | Pause quoting if `spread_vol > 1%`.                                                                                                                                                                               |
+| **Time-In-Force (TIF)** | ALO orders, 5 s expiry.                                                                                                                                                                                           |
 
 ## 5. Safeguards & Controls
 
