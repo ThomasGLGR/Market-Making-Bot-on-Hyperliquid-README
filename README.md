@@ -18,7 +18,7 @@ This README outlines the architecture and setup of a high-frequency market-makin
 |               | `go.uber.org/zap`           | High-performance structured logging library |
 
 ## 2. Software Architecture
-![Architecture](media/architecture.png)
+![Architecture](architecture.png)
 
 ## 3. Deploying the Hyperliquid Node
 
